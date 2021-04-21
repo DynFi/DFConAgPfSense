@@ -1,0 +1,12 @@
+#!/bin/sh
+
+
+ABIVERS=`pkg -vv | grep "ABI" | grep "BSD" | sed 's/"/#/g' | awk 'BEGIN{FS="#"} {print $2}' | awk 'BEGIN{FS=":"} {print $2}'`
+ABIARCH=`pkg -vv | grep "ABI" | grep "BSD" | sed 's/"/#/g' | awk 'BEGIN{FS="#"} {print $2}' | awk 'BEGIN{FS=":"} {print $3}'`
+
+if [ "$ABIVERS" == "10" ]; then
+    ABIVERS="11"
+fi
+
+echo "Installing autossh ($ABIVERS:$ABIARCH)"
+pkg add -f https://pkg.freebsd.org/FreeBSD:$ABIVERS:$ABIARCH/quarterly/All/autossh-1.4g.txz

@@ -1,0 +1,7 @@
+#!/usr/local/bin/php
+
+<?php
+require_once("/usr/local/pkg/dfconag/dfconag.inc");
+dfconag_log("DynFi Manager requested disconnection");
+dfconag_disconnect();
+echo "Disconnected\n";

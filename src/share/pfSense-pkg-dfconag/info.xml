@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<pfsensepkgs>
+    <package>
+        <name>dfconag</name>
+        <website>https://dynfi.com</website>
+        <descr><![CDATA[DynFi Connection Agent]]></descr>
+        <version>1.0</version>
+        <configurationfile>dfconag.xml</configurationfile>
+    </package>
+</pfsensepkgs>

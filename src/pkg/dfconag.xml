@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE packagegui SYSTEM "../schema/packages.dtd">
+<?xml-stylesheet type="text/xsl" href="../xsl/package.xsl"?>
+<packagegui>
+    <copyright>
+    <![CDATA[
+/*
+ * dfconag.xml
+ *
+ * Copyright (c) 2020 DynFi
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+    ]]>
+    </copyright>
+    <description>DynFi Connection Agent</description>
+    <name>dfconag</name>
+    <title>Services: DynFi Connection Agent</title>
+    <include_file>/usr/local/pkg/dfconag/dfconag.inc</include_file>
+    <menu>
+        <name>DynFi Connection Agent</name>
+        <tooltiptext>Configure DynFi Connection Agent</tooltiptext>
+        <section>Services</section>
+        <url>/dfconag_status.php</url>
+    </menu>
+    <service>
+        <name>dfconag</name>
+        <rcfile>dfconag.sh</rcfile>
+        <executable>dfconag</executable>
+        <description>DynFi Connection Agent Daemon</description>
+        <custom_php_service_status_command>
+          <![CDATA[file_exists("/var/run/dfconag.pid");]]>
+        </custom_php_service_status_command>
+    </service>
+    <configpath>['installedpackages']['dfconag']</configpath>
+    <custom_php_resync_config_command>dfconag_config_resync();</custom_php_resync_config_command>
+    <filter_rules_needed>dfconag_generate_rules</filter_rules_needed>
+</packagegui>
