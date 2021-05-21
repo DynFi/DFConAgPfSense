@@ -157,9 +157,22 @@ function dfconag_whoami() {
 
 
 function dfconag_store_knownhosts($key, $hashedkey) {
-  if (file_exists('/var/dfconag/known_hosts'))
+  if (file_exists('/var/dfconag/known_hosts')) {
     unlink('/var/dfconag/known_hosts');
+  } else {
+    shell_exec('mkdir -p /var/dfconag');
+  }
+  dfconag_log("writing known_hosts file for $key");
   file_put_contents('/var/dfconag/known_hosts', "$key\n$hashedkey\n");  
+}
+
+
+function dfconag_check_knownhosts() {
+  global $config; 
+  $settings = array_merge(array(), $config['installedpackages']['dfconag']);    
+  if ((!file_exists('/var/dfconag/known_hosts')) && (!empty($settings['knownhosts'])) && (!empty($settings['knownhostsnothashed']))) {
+    dfconag_store_knownhosts($settings['knownhostsnothashed'], $settings['knownhosts']);
+  }
 }
 
 
@@ -315,7 +328,7 @@ function dfconag_register($username, $password, $groupid, $sshuser, $secret) {
 
   $config['installedpackages']['dfconag']['enable'] = true;   
   $config['installedpackages']['dfconag']['deviceid'] = $obj['id'];
-  write_config();
+  write_config("DynFi Connection Agent", false, true);
   
   dfconag_write_rcfile();
   dfconag_start();
@@ -381,6 +394,7 @@ function dfconag_check_privatekey() {
       write_config("DynFi Connection Agent", false, true);
     }
   } else {
+    shell_exec('mkdir -p /var/dfconag');
     if ((empty($settings['sshprivatekey'])) || (empty($settings['sshpublickey']))) {
       dfconag_log("attempting to generate SSH keys");
       dfconag_generate_ssh_keys();
@@ -391,9 +405,9 @@ function dfconag_check_privatekey() {
       $config['installedpackages']['dfconag']['sshpublickey'] =  file_get_contents('/var/dfconag/key.pub');
       write_config("DynFi Connection Agent", false, true);
     } else {
-      dfconag_log("generating SSH key files");  
-      file_put_contents('/var/dfconag/key', $settings['sshprivatekey']);
-      file_put_contents('/var/dfconag/key.pub', $settings['sshpublickey']);
+      dfconag_log("generating SSH key files");        
+      file_put_contents('/var/dfconag/key', $settings['sshprivatekey']."\n");
+      file_put_contents('/var/dfconag/key.pub', $settings['sshpublickey']."\n");
       chmod('/var/dfconag/key', 0600);
     }
   }
@@ -401,7 +415,6 @@ function dfconag_check_privatekey() {
 
 
 function dfconag_generate_ssh_keys() {
-  shell_exec('mkdir -p /var/dfconag');
   $res = dfconag_do_shell('ssh-keygen -q -t ed25519 -N \'\' -f /var/dfconag/key');
   dfconag_log("ssh-keygen: ".print_r($res, true));
   if (!empty($res['error']))
@@ -483,7 +496,7 @@ function dfconag_write_rcfile() {
   
     $start = "
 if ! pgrep -qF /var/run/dfconag.pid 2> /dev/null; then
-  echo \"Starting DFConAg autossh to $$dfmhost\"
+  echo \"Starting DFConAg autossh to $dfmhost\"
   env AUTOSSH_GATETIME=0 env AUTOSSH_PIDFILE=/var/run/dfconag.pid env AUTOSSH_LOGFILE=/var/log/dfconag.log env AUTOSSH_LOGLEVEL=6 env AUTOSSH_PATH=/usr/bin/ssh /usr/local/bin/autossh -M 0 -f -N -oUserKnownHostsFile=/var/dfconag/known_hosts -oServerAliveInterval=30 -oServerAliveCountMax=3 -i /var/dfconag/key -p $dfmsshport -R $maintunnelport:localhost:$remotesshport -R $dvtunnelport:localhost:$remotedvport robot@$dfmhost
 else
   echo \"DFConAg already running\"
@@ -502,7 +515,7 @@ else
 fi
 ";
   } else {
-   dfconag_log("generating rcfile for a disabled service");
+    dfconag_log("generating rcfile for a disabled service");
   }
 
   write_rcfile(array(
@@ -600,6 +613,7 @@ function dfconag_config_resync() {
   if (dfconag_pretest() != 'OK')
     return;
   
+  dfconag_check_knownhosts();
   dfconag_check_privatekey();
   dfconag_write_rcfile();
   
