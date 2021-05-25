@@ -60,6 +60,7 @@ if ($pretestResult == 'SSH_NOT_ENABLED') {
     echo '<tr class="dfcinf"><td>'.gettext("Device ID").'</td><td>'.$status['deviceid'].'</td></tr>';
     echo '<tr class="dfcinf"><td>'.gettext("Main tunnel").'</td><td>'.$status['maintunnelport'].' &rarr; '.$status['remotesshport'].'</td></tr>';
     echo '<tr class="dfcinf"><td>'.gettext("DirectView tunnel").'</td><td>'.$status['dvtunnelport'].' &rarr; '.$status['remotedvport'].'</td></tr>';
+    echo '<tr class="dfcinf"><td>'.gettext("Interfaces").'</td><td>'.$status['interfaces'].'</td></tr>';
   } else {
     echo '<tr class="dfcinf"><td colspan="2">'
       .str_replace('DynFi® Manager', '<a href="https://dynfi.com/download">DynFi® Manager</a>', gettext("The DynFi Connection Agent simplifies the administration of your pfSense-CE firewalls and requires the use of DynFi® Manager."))

@@ -87,6 +87,17 @@ function dfconag_check_status() {
   if (!isset($settings['enable']))
     return null;  
   
+  $iflist = array_intersect_key(
+    get_configured_interface_with_descr(),
+    array_flip(
+      array_keys(get_configured_interface_with_descr())
+    )
+  );
+  $interfaces = array();
+  foreach (explode(',', $settings['interfaces']) as $iface)
+    $interfaces[] = $iflist[$iface];
+  $settings['interfaces'] = implode(', ', $interfaces);
+  
   $settings['remotesshport'] = (!empty($config['system']['ssh']['port'])) ? $config['system']['ssh']['port'] : 22;
   $settings['remotedvport'] = (!empty($config['system']['webgui']['port'])) ? $config['system']['webgui']['port'] : ($config['system']['webgui']['protocol'] == 'https' ? 443 : 80);
   
@@ -585,13 +596,9 @@ function dfconag_generate_rules($type) {
 
   $rules = "# allow DynFi Connection Agent traffic\n";
 
-  $ifaces = array();
-  if (function_exists('get_interface_ports'))
-    $ifaces = get_interface_ports();
-  else if (function_exists('get_interfaces_with_gateway'))
-    $ifaces = get_interfaces_with_gateway();
-    
-  foreach ($ifaces as $ifent => $ifdesc) {    
+  $ifaces = explode(',', $interfaces);
+  
+  foreach ($ifaces as $ifent) {    
     dfconag_log("generating rule for $ifent $dfmhost:$maintunnelport");    
     $rules .= "pass  out  quick  on $ifent inet proto tcp  from any to $dfmhost port $maintunnelport flags S/SA keep state  label \"DynFi Connection Agent main tunnel\"\n";
     dfconag_log("generating rule for $ifent $dfmhost:$dvtunnelport");    

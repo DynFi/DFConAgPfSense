@@ -20,6 +20,8 @@
 
 require("guiconfig.inc");
 
+require_once("filter.inc");
+
 require_once("/usr/local/pkg/dfconag/dfconag.inc");
 
 global $g, $config;
@@ -32,8 +34,19 @@ if (!is_array($config['installedpackages']['dfconag'])) {
   }
 }
 
+$iflist = array_intersect_key(
+  get_configured_interface_with_descr(),
+  array_flip(
+    array_keys(get_configured_interface_with_descr())
+  )
+);
 
 $pconfig = array_merge(array(), $config['installedpackages']['dfconag']);
+if ((!isset($pconfig['interfaces'])) || empty($pconfig['interfaces'])) {
+  $pconfig['interfaces'] = array_keys($iflist);
+} else {
+  $pconfig['interfaces'] = explode(',', $pconfig['interfaces']);
+}
 
 if ($_POST) {
   unset($input_errors);
@@ -44,6 +57,7 @@ if ($_POST) {
   } 
   
   $input = array_map('trim', $_POST);
+  $input['interfaces'] = $_POST['interfaces'];
   
   if (empty($input['dfmhost'])) {
     $input_errors[] = gettext("DynFi® Manager host is required");
@@ -55,9 +69,14 @@ if ($_POST) {
     $input_errors[] = gettext("A valid DynFi® Manager SSH port must be specified");
   }
   
+  if (empty($input['interfaces'])) {
+    $input_errors[] = gettext("Select at least one interface");
+  }
+
   if (!$input_errors) {
     $config['installedpackages']['dfconag']['dfmhost'] = $input['dfmhost'];
     $config['installedpackages']['dfconag']['dfmsshport'] = $input['dfmsshport']; 
+    $config['installedpackages']['dfconag']['interfaces'] = implode(',', $input['interfaces']); 
     write_config("DynFi Connection Agent", false, true);
 
     $checkResult = dfconag_check_connection();
@@ -86,7 +105,7 @@ if ($_POST) {
                 $addoptions = json_decode($res, true);
               } catch (Exception $e) {
                 $input_errors[] = $e->getMessage();
-              }    
+              }
               if ($addoptions) {
                 if (function_exists('phpsession_begin'))
                   @phpsession_begin();
@@ -185,6 +204,14 @@ $section->addInput(new Form_Input(
   $pconfig['dfmsshport']
 ));
 
+$section->addInput(new Form_Select(
+  'interfaces',
+  'Interface(s)',
+  $pconfig['interfaces'],
+  $iflist,
+  true
+));
+
 $form->add($section);
 
 $form->addGlobal(new Form_Button(
@@ -236,12 +263,14 @@ function decodeToken() {
 $(document).ready(function ($) {
   $('#dfmhost').parent().parent().hide();
   $('#dfmsshport').parent().parent().hide();
+  $('.form-group select').parent().parent().hide();
   $('#dfmtoken').parent().parent().find('span').append('&nbsp;<i id="tokenmark" style="display: none"></i>');
   $('#dfmtoken').change(decodeToken).keyup(decodeToken);
   $('#btnadvanced').click(function () {
     $('#btnadvanced').parent().parent().hide();
     $('#dfmhost').parent().parent().show();
     $('#dfmsshport').parent().parent().show();
+    $('.form-group select').parent().parent().show();
   });
 });
 </script>
