@@ -633,3 +633,9 @@ function dfconag_config_resync() {
 function dfconag_install_autossh() {
   shell_exec('/usr/local/bin/install_autossh');
 }
+
+
+function dfconag_get_current_version() {
+  return shell_exec('/usr/local/bin/current_version');
+}
+

@@ -96,3 +96,15 @@ if ($status) {
 </div>
 
 <?php include("foot.inc"); ?>
+
+<script type="text/javascript">
+$(document).ready(function ($) {
+  $.get('/dfconag_update_check.php', function (response) {    
+    if (response.length) {
+      var msg = '<?php echo gettext("Version %s of DynFi Connection Agent is available."); ?>'.replace('%s', response)
+          + ' <?php echo gettext("Visit %s for installation instructions."); ?>'.replace('%s', '<a href="https://dynfi.com/connection-agent">https://dynfi.com/connection-agent</a>');
+      $('#container').prepend('<div class="alert alert-info">' + msg + '</div>');
+    }
+  });
+});
+</script>
