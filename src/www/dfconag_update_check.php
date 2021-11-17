@@ -20,7 +20,7 @@
 
 require_once("/usr/local/pkg/dfconag/dfconag.inc");
 
-$curr = dfconag_get_current_version();
+$curr = trim(dfconag_get_current_version());
 if (empty($curr))
     exit;
 
@@ -28,7 +28,7 @@ $versionsjson = file_get_contents("https://dynfi.com/versions.json");
 if (empty($versionsjson))
     exit;
 $versions = json_decode($versionsjson, true);
-$latest = $versions['dfconag']['pfsense'];
+$latest = trim($versions['dfconag']['pfsense']);
 
 if (version_compare($curr, $latest) < 0)
     echo $latest;
