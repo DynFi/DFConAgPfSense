@@ -274,7 +274,7 @@ function dfconag_register($username, $password, $groupid, $sshuser, $secret) {
   $authType = 'password';
   if (empty($secret)) {
     dfconag_log('generating key for auth');
-    shell_exec("ssh-keygen -m PEM -q -t rsa -N '' -C \"dfconag@`hostname`\" -f /tmp/tmpkey");  
+    shell_exec("ssh-keygen -m PEM -q -t ecdsa -b 256 -N '' -C \"dfconag@`hostname`\" -f /tmp/tmpkey");  
     if ((!file_exists('/tmp/tmpkey')) || (!file_exists('/tmp/tmpkey.pub'))) {
       throw new Exception("SSH keys generation failed");
     }
