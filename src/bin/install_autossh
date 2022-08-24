@@ -9,4 +9,4 @@ if [ "$ABIVERS" == "10" ]; then
 fi
 
 echo "Installing autossh ($ABIVERS:$ABIARCH)"
-pkg add -f https://pkg.freebsd.org/FreeBSD:$ABIVERS:$ABIARCH/quarterly/All/autossh-1.4g.txz
+pkg add -f https://pkg.freebsd.org/FreeBSD:$ABIVERS:$ABIARCH/quarterly/All/autossh-1.4g.pkg
