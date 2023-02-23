@@ -40,7 +40,7 @@ It is very easy to install the DynFi Connection Agent on pfSense-CE firewalls by
 <br> 
 
 ```bash
-  wget -O - https://dynfi.com/connection-agent/download/pfsense/dfconag-latest-installer.sh | sh  
+  wget -O - https://dynfi.com/files/connection-agent/pfsense/dfconag-latest-installer.sh | sh
 ```  
   
 <br> 

@@ -34,7 +34,7 @@ Il est très simple d'installer l'Agent de Connexion DynFi sur les firewalls pfS
 <br> 
 
 ```bash
-  wget -O - https://dynfi.com/connection-agent/download/pfsense/dfconag-latest-installer.sh | sh  
+  wget -O - https://dynfi.com/files/connection-agent/pfsense/dfconag-latest-installer.sh | sh
 ```  
   
 <br>  ![Installation de DynFi Connexion Agent sur pfSense](https://dynfi.com/img/DynFi_Manager/pfSense_connection_agent.png "Installer DynFi Connexion Agent sur pfSense-CE") 
