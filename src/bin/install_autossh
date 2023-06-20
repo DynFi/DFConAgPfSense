@@ -1,12 +1,15 @@
 #!/bin/sh
 
 
-ABIVERS=`pkg -vv | grep "ABI" | grep "BSD" | sed 's/"/#/g' | awk 'BEGIN{FS="#"} {print $2}' | awk 'BEGIN{FS=":"} {print $2}'`
-ABIARCH=`pkg -vv | grep "ABI" | grep "BSD" | sed 's/"/#/g' | awk 'BEGIN{FS="#"} {print $2}' | awk 'BEGIN{FS=":"} {print $3}'`
+ABIVERS=`uname -K | cut -c1-2`
+ABIARCH=`uname -m`
 
-if [ "$ABIVERS" == "10" ]; then
-    ABIVERS="11"
+if [ "$ABIVERS" -lt "12" ]; then
+	ABIVERS="12"
 fi
-
-echo "Installing autossh ($ABIVERS:$ABIARCH)"
-pkg add -f https://pkg.freebsd.org/FreeBSD:$ABIVERS:$ABIARCH/quarterly/All/autossh-1.4g.pkg
+if [ "$ABIVERS" -gt "13" ]; then
+	pkg add -f https://packages.dynfi.com/dff/autossh-1.4g.pkg
+else
+	echo "Installing autossh ($ABIVERS:$ABIARCH)"
+	pkg add -f https://pkg.freebsd.org/FreeBSD:$ABIVERS:$ABIARCH/quarterly/All/autossh-1.4g.pkg
+fi
