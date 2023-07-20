@@ -54,9 +54,9 @@ if ($_POST) {
   if (isset($_POST['cancel'])) {
     header('Location: /dfconag_status.php');
     exit;
-  } 
-  
-  $input = array_map('trim', $_POST);
+  }
+
+  $input = array_map('trim_if_string', $_POST);
   $input['interfaces'] = $_POST['interfaces'];
   
   if (empty($input['dfmhost'])) {

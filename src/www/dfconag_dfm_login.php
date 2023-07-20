@@ -32,7 +32,7 @@ if ($_POST) {
     exit;
   }   
   
-  $input = array_map('trim', $_POST);
+  $input = array_map('trim_if_string', $_POST);
   
   if (empty($input['dfmusername'])) {
     $input_errors[] = gettext("DynFi® Manager username is required");

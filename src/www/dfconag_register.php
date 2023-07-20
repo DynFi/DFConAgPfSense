@@ -38,7 +38,7 @@ if ($_POST) {
     exit;
   }   
 
-  $input = array_map('trim', $_POST);  
+  $input = array_map('trim_if_string', $_POST);  
 
   if (!$input_errors) {
   

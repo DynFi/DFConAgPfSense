@@ -82,7 +82,7 @@ function dfconag_pretest() {
 
 function dfconag_check_status() {
   global $config;  
-  $settings = array_merge(array(), $config['installedpackages']['dfconag']);
+  $settings = (is_array($config['installedpackages']) && is_array($config['installedpackages']['dfconag'])) ? $config['installedpackages']['dfconag'] : array();
   
   if (!isset($settings['enable']))
     return null;  
@@ -107,7 +107,7 @@ function dfconag_check_status() {
 
 function dfconag_check_connection() {
   global $config;    
-  $settings = array_merge(array(), $config['installedpackages']['dfconag']);
+  $settings = (is_array($config['installedpackages']) && is_array($config['installedpackages']['dfconag'])) ? $config['installedpackages']['dfconag'] : array();
   
   $res = dfconag_do_shell('nc -zv -w 10 '.$settings['dfmhost'].' '.$settings['dfmsshport']);
   
@@ -141,7 +141,7 @@ function dfconag_stop() {
 
 function dfconag_whoami() {
   global $config;    
-  $settings = array_merge(array(), $config['installedpackages']['dfconag']);  
+  $settings = (is_array($config['installedpackages']) && is_array($config['installedpackages']['dfconag'])) ? $config['installedpackages']['dfconag'] : array();
   
   dfconag_check_privatekey();
   
@@ -180,7 +180,7 @@ function dfconag_store_knownhosts($key, $hashedkey) {
 
 function dfconag_check_knownhosts() {
   global $config; 
-  $settings = array_merge(array(), $config['installedpackages']['dfconag']);    
+  $settings = (is_array($config['installedpackages']) && is_array($config['installedpackages']['dfconag'])) ? $config['installedpackages']['dfconag'] : array();
   if ((!file_exists('/var/dfconag/known_hosts')) && (!empty($settings['knownhosts'])) && (!empty($settings['knownhostsnothashed']))) {
     dfconag_store_knownhosts($settings['knownhostsnothashed'], $settings['knownhosts']);
   }
@@ -189,7 +189,7 @@ function dfconag_check_knownhosts() {
 
 function dfconag_keyscan() {
   global $config;    
-  $settings = array_merge(array(), $config['installedpackages']['dfconag']);  
+  $settings = (is_array($config['installedpackages']) && is_array($config['installedpackages']['dfconag'])) ? $config['installedpackages']['dfconag'] : array();
 
   $res = dfconag_do_shell('ssh-keyscan -p '.$settings['dfmsshport'].' '.$settings['dfmhost']);  
   $resh = dfconag_do_shell('ssh-keyscan -H -p '.$settings['dfmsshport'].' '.$settings['dfmhost']);
@@ -214,7 +214,7 @@ function dfconag_get_add_options($username, $password) {
   
   dfconag_check_privatekey();
   
-  $settings = array_merge(array(), $config['installedpackages']['dfconag']); 
+  $settings = (is_array($config['installedpackages']) && is_array($config['installedpackages']['dfconag'])) ? $config['installedpackages']['dfconag'] : array();
   
   $input = json_encode(
     ($username == '#token#') ? array('token' => $password) 
@@ -236,7 +236,7 @@ function dfconag_reserve_ports($username, $password, $mainTunnelPort, $dvTunnelP
   
   dfconag_check_privatekey();
   
-  $settings = array_merge(array(), $config['installedpackages']['dfconag']); 
+  $settings = (is_array($config['installedpackages']) && is_array($config['installedpackages']['dfconag'])) ? $config['installedpackages']['dfconag'] : array();
   
   $input = json_encode(
     ($username == '#token#') ? array(
@@ -268,7 +268,7 @@ function dfconag_register($username, $password, $groupid, $sshuser, $secret) {
   
   dfconag_check_privatekey();
   
-  $settings = array_merge(array(), $config['installedpackages']['dfconag']); 
+  $settings = (is_array($config['installedpackages']) && is_array($config['installedpackages']['dfconag'])) ? $config['installedpackages']['dfconag'] : array();
   
   $publicKey = null;
   $authType = 'password';
@@ -350,7 +350,7 @@ function dfconag_register($username, $password, $groupid, $sshuser, $secret) {
 
 function dfconag_delete_from_manager() {
   global $config; 
-  $settings = array_merge(array(), $config['installedpackages']['dfconag']); 
+  $settings = (is_array($config['installedpackages']) && is_array($config['installedpackages']['dfconag'])) ? $config['installedpackages']['dfconag'] : array();
 
   dfconag_check_privatekey();
   
@@ -395,7 +395,7 @@ function dfconag_disconnect($delete = false) {
 
 function dfconag_check_privatekey() {
   global $config;
-  $settings = array_merge(array(), $config['installedpackages']['dfconag']); 
+  $settings = (is_array($config['installedpackages']) && is_array($config['installedpackages']['dfconag'])) ? $config['installedpackages']['dfconag'] : array();
   
   if (file_exists('/var/dfconag/key')) {
     if ((empty($settings['sshprivatekey'])) || (empty($settings['sshpublickey']))) {
@@ -493,7 +493,7 @@ function dfconag_decode_token($jwt) {
 
 function dfconag_write_rcfile() {
   global $config;
-  $settings = array_merge(array(), $config['installedpackages']['dfconag']);       
+  $settings = (is_array($config['installedpackages']) && is_array($config['installedpackages']['dfconag'])) ? $config['installedpackages']['dfconag'] : array();      
       
   $start = "echo \"DFConAg not enabled\"";
   $stop = "echo \"DFConAg not running\"";
@@ -588,7 +588,7 @@ function dfconag_generate_rules($type) {
   if ($type != 'filter')
     return "";
 
-  $settings = array_merge(array(), $config['installedpackages']['dfconag']);       
+  $settings = (is_array($config['installedpackages']) && is_array($config['installedpackages']['dfconag'])) ? $config['installedpackages']['dfconag'] : array();  
   if (!isset($settings['enable']))
     return "";
   
@@ -612,8 +612,9 @@ function dfconag_generate_rules($type) {
 
 
 function dfconag_config_resync() {
-  global $config;  
-  $settings = array_merge(array(), $config['installedpackages']['dfconag']);
+  global $config;
+  
+  $settings = (is_array($config['installedpackages']) && is_array($config['installedpackages']['dfconag'])) ? $config['installedpackages']['dfconag'] : array();
   
   dfconag_log("config resync");    
   
@@ -639,3 +640,7 @@ function dfconag_get_current_version() {
   return shell_exec('/usr/local/bin/current_version');
 }
 
+
+function trim_if_string($s) {
+  return (is_string($s)) ? trim($s) : $s;
+}
